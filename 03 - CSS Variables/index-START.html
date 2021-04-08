@@ -1,51 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Scoped CSS Variables and JS</title>
-</head>
-<body>
-  <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Scoped CSS Variables and JS</title>
+  </head>
+  <body>
+    <h2>Update CSS Variables with <span class="hl">JS</span></h2>
 
-  <div class="controls">
-    <label for="spacing">Spacing:</label>
-    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+    <div class="controls">
+      <label for="spacing">Spacing:</label>
+      <input
+        id="spacing"
+        type="range"
+        name="spacing"
+        min="10"
+        max="200"
+        value="10"
+        data-sizing="px"
+      />
 
-    <label for="blur">Blur:</label>
-    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+      <label for="blur">Blur:</label>
+      <input
+        id="blur"
+        type="range"
+        name="blur"
+        min="0"
+        max="25"
+        value="10"
+        data-sizing="px"
+      />
 
-    <label for="base">Base Color</label>
-    <input id="base" type="color" name="base" value="#ffc600">
-  </div>
+      <label for="base">Base Color</label>
+      <input id="base" type="color" name="base" value="#ffc600" />
+    </div>
 
-  <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
+    <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500" />
 
-  <style>
+    <style>
+      :root {
+        --base: yellow;
+        --spacing: 50px;
+        --blur: 10px;
+      }
 
-    /*
-      misc styles, nothing to do with CSS variables
-    */
+      img {
+        padding: var(--spacing);
+        background: var(--base);
+        filter: blur(var(--blur));
+      }
 
-    body {
-      text-align: center;
-      background: #193549;
-      color: white;
-      font-family: 'helvetica neue', sans-serif;
-      font-weight: 100;
-      font-size: 50px;
-    }
+      .hl {
+        color: var(--base);
+      }
 
-    .controls {
-      margin-bottom: 50px;
-    }
+      body {
+        text-align: center;
+        background: #193549;
+        color: white;
+        font-family: "helvetica neue", sans-serif;
+        font-weight: 100;
+        font-size: 50px;
+      }
 
-    input {
-      width: 100px;
-    }
-  </style>
+      .controls {
+        margin-bottom: 50px;
+      }
 
-  <script>
-  </script>
+      input {
+        width: 100px;
+      }
+    </style>
 
-</body>
+    <script>
+      // querySelector returns a "NodeList"
+      // NodeList prototype's have forEach property
+      // arrays have forEach already but now, we don't have to convert our NL to an array
+      // it's native in NodeList now
+      const inputs = document.querySelectorAll(".controls input");
+
+      // when its called,
+      function handleUpdate() {
+        // get the 'data-sizing' custom attribute we add
+        // in this case it's "px"
+        const suffix = this.dataset.sizing || "";
+
+        // set the "name" variable property to the input's value plus the suffix (px)
+        document.documentElement.style.setProperty(
+          `--${this.name}`,
+          this.value + suffix
+        );
+      }
+
+      // loop over each input
+      // listen for chagne event
+      // when its called, call handleUpdate function
+      // -------------------------------------------------
+      // THIS: when you lift your finger off the input (i.e. its done moving) and thus a value is selected, that value is our value
+      inputs.forEach((input) => input.addEventListener("change", handleUpdate));
+
+      // THIS: when the value changes AT ALL as we're sliding around from left to right
+      inputs.forEach((input) =>
+        input.addEventListener("mousemove", handleUpdate)
+      );
+    </script>
+  </body>
 </html>
